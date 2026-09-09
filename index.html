@@ -29,7 +29,7 @@
             padding-bottom: 10px;
             margin-bottom: 25px;
         }
-        /* Статичная сетка 16 строк на 17 колонок */
+        /* Сетка 16 строк на 17 колонок */
         .crossword { 
             display: grid;
             grid-template-rows: repeat(16, 34px);
@@ -59,7 +59,7 @@
             box-sizing: border-box; 
             font-family: "Courier New", monospace;
         }
-        /* Главная вертикаль (9-й столбец) */
+        /* Главная вертикаль */
         .cell.main-col { background: #ecdcb9; border-color: #8c6d47; }
         .cell:focus { outline: 2px solid #b37d4e; background: #fffdf9; }
         .cell.correct { background: #557a46 !important; color: #fdfaf2; border-color: #3b5530; }
@@ -127,8 +127,6 @@
 </div>
 
 <script>
-    // Жестко прописанная конфигурация сетки на основе вашей картинки
-    // [номер, стартовая_колонка(1-17), длина_слова, sha256_хэш]
     const crosswordMap = [
         [1, 9, 7, "65076ec6301389bc70b0946b9409893d1421f1da8b9bf58df209b4db7046098d"],
         [2, 6, 6, "fe326880864eb7984f479d2b27af6c43336ee5eb725bc7051d95392e20ff9a70"],
@@ -151,7 +149,7 @@
     const grid = document.getElementById('grid');
     const totalRows = 16;
     const totalCols = 17;
-    const mainColumnIndex = 9; // Индекс главной вертикали (столбец 9)
+    const mainColumnIndex = 9;
 
     // Генерация пустой сетки в DOM
     for (let r = 1; r <= totalRows; r++) {
@@ -162,7 +160,6 @@
             const cellContainer = document.createElement('div');
             cellContainer.className = 'cell-container';
 
-            // Если координата попадает в диапазон слова, рисуем инпут
             if (c >= startCol && c < startCol + length) {
                 if (c === startCol) {
                     const label = document.createElement('span');
@@ -182,7 +179,6 @@
 
                 cellContainer.appendChild(input);
             } else {
-                // Если ячейка пустая, просто задаем пустой блок для сохранения сетки CSS Grid
                 cellContainer.style.visibility = 'hidden';
             }
 
@@ -190,12 +186,11 @@
         }
     }
 
-    // Настройка автофокуса на следующую ячейку (по строкам)
+    // Настройка автофокуса на следующую ячейку
     const inputs = document.querySelectorAll('.cell');
     inputs.forEach((input, index) => {
         input.addEventListener('input', function() {
             if (this.value.length === 1 && index < inputs.length - 1) {
-                // Проверяем, что следующая ячейка принадлежит той же строке
                 if (inputs[index + 1].getAttribute('row-id') === this.getAttribute('row-id')) {
                     inputs[index + 1].focus();
                 }
@@ -203,7 +198,6 @@
         });
     });
 
-    // Функция генерации хэша SHA-256
     async function sha256(message) {
         const msgBuffer = new TextEncoder().encode(message);
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -211,14 +205,13 @@
         return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // Проверка ответов
     async function checkCrossword() {
         let totalGameCorrect = true;
         let anyEmpty = false;
 
         for (let r = 1; r <= totalRows; r++) {
             const rowInputs = document.querySelectorAll(`.cell[row-id="${r}"]`);
-            const targetHash = crosswordMap[r - 1][3];
+            const targetHash = crosswordMap[r - 1][3]; // Исправлено: берем 4-й элемент массива (сам хэш)
             let wordAttempt = "";
             let rowEmpty = false;
 
@@ -234,3 +227,16 @@
                 rowInputs.forEach(input => input.classList.remove('correct'));
                 totalGameCorrect = false;
                 continue;
+            }
+
+            const currentHash = await sha256(wordAttempt);
+
+            if (currentHash === targetHash) {
+                rowInputs.forEach(input => input.classList.add('correct'));
+            } else {
+                rowInputs.forEach(input => input.classList.remove('correct'));
+                totalGameCorrect = false;
+            }
+        }
+
+        if (totalGameCorrect && !anyEmpty) {
