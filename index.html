@@ -55,13 +55,11 @@
     </ol>
     <h3>Вертикально (выделено цветом):</h3>
     <ul>
-        <li><strong>ФАЛЬШИВОМОНЕТНИЧЕСТВО</strong> — Валютная махинация с серебром Тренни из первой арки.</li>
+        <li><strong>ГЛАВНОЕ СЛОВО</strong> — Какая масштабная валютная махинация с серебром Тренни лежала в основе первой арки приключений? (Слово соберется само при правильном заполнении горизонталей).</li>
     </ul>
 </div>
 
 <script>
-    // Массив слов с их сдвигом относительно центрального вертикального слова (ФАЛЬШИВОМОНЕТНИЧЕСТВО)
-    // Строка состоит из: [номер, слово, индекс буквы, которая пересекается с главной вертикалью]
     const words = [
         [1, "ФОЛИАНТ", 0],
         [2, "УРОЖАЙ", 3],
@@ -91,6 +89,7 @@
         const [num, word, mainIdx] = wordData;
         const row = document.createElement('div');
         row.className = 'row';
+        row.dataset.wordIndex = num; // Запоминаем номер строки для проверки
 
         const startSpaces = maxLeft - mainIdx;
 
@@ -120,7 +119,6 @@
                     input.classList.add('main-col');
                 }
 
-                // Автопереход на следующую ячейку при вводе
                 input.addEventListener('input', function() {
                     if (this.value.length === 1) {
                         const next = this.parentElement.nextElementSibling?.querySelector('input');
@@ -136,20 +134,37 @@
     });
 
     function checkCrossword() {
-        const inputs = document.querySelectorAll('.cell');
-        let allCorrect = true;
+        const rows = document.querySelectorAll('.row');
+        let totalGameCorrect = true;
 
-        inputs.forEach(input => {
-            if (input.value.toUpperCase() === input.dataset.answer) {
-                input.classList.add('correct');
-            } else {
-                input.classList.remove('correct');
-                if (input.value !== '') allCorrect = false;
-            }
+        rows.forEach(row => {
+            const inputs = row.querySelectorAll('.cell');
+            let rowCorrect = true;
+
+            // Сначала проверяем, все ли буквы в текущем ряду введены верно
+            inputs.forEach(input => {
+                if (input.value.toUpperCase() !== input.dataset.answer) {
+                    rowCorrect = false;
+                }
+            });
+
+            // Если всё слово целиком правильное — подсвечиваем его зелёным
+            inputs.forEach(input => {
+                if (rowCorrect) {
+                    input.classList.add('correct');
+                } else {
+                    input.classList.remove('correct'); // Убираем зелёный, если была ошибка
+                    totalGameCorrect = false;
+                }
+            });
         });
 
-        if (allCorrect && Array.from(inputs).every(i => i.value !== '')) {
-            alert('Поздравляем! Кроссворд решен верно! 🎉');
+        // Проверяем, заполнено ли всё поле без единой ошибки
+        const allInputs = document.querySelectorAll('.cell');
+        const anyEmpty = Array.from(allInputs).some(i => i.value === '');
+
+        if (totalGameCorrect && !anyEmpty) {
+            alert('Поздравляем! Весь кроссворд разгадан абсолютно верно! 🎉');
         }
     }
 </script>
