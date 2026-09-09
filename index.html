@@ -29,9 +29,11 @@
             padding-bottom: 10px;
             margin-bottom: 25px;
         }
+        /* Статичная сетка 16 строк на 17 колонок */
         .crossword { 
-            display: flex; 
-            flex-direction: column; 
+            display: grid;
+            grid-template-rows: repeat(16, 34px);
+            grid-template-columns: repeat(17, 34px);
             gap: 4px; 
             background: #e6d5bc; 
             padding: 15px; 
@@ -39,10 +41,8 @@
             box-shadow: inset 0 0 20px rgba(139,69,19,0.15), 0 10px 20px rgba(0,0,0,0.1); 
             border: 1px solid #b39973;
         }
-        .row { display: flex; justify-content: center; align-items: center; gap: 4px; }
-        .cell-space { width: 34px; height: 34px; }
         .cell-container { position: relative; width: 34px; height: 34px; }
-        .num-label { position: absolute; top: 2px; left: 3px; font-size: 9px; color: #6e4e37; z-index: 10; font-weight: bold; }
+        .num-label { position: absolute; top: 2px; left: 3px; font-size: 9px; color: #6e4e37; z-index: 10; font-weight: bold; pointer-events: none; }
         
         .cell { 
             width: 100%; 
@@ -59,6 +59,7 @@
             box-sizing: border-box; 
             font-family: "Courier New", monospace;
         }
+        /* Главная вертикаль (9-й столбец) */
         .cell.main-col { background: #ecdcb9; border-color: #8c6d47; }
         .cell:focus { outline: 2px solid #b37d4e; background: #fffdf9; }
         .cell.correct { background: #557a46 !important; color: #fdfaf2; border-color: #3b5530; }
@@ -126,65 +127,44 @@
 </div>
 
 <script>
-    const encryptedWords = [
-        [1, 7, 0, "65076ec6301389bc70b0946b9409893d1421f1da8b9bf58df209b4db7046098d"],
-        [2, 6, 3, "fe326880864eb7984f479d2b27af6c43336ee5eb725bc7051d95392e20ff9a70"],
-        [3, 5, 3, "b6fe9bdaebc25492212b07e7804473b1858c8ec7ffdf615967ee359ff246e7f1"],
-        [4, 7, 4, "15f13456c64bf210b379893ef2d33457a41ec4391694f8e658ec879a6136dfd0"],
-        [5, 11, 5, "cb8eb235a8df9e8ee4875704d94f24300bc80b85aa2638a1a36412f716611833"],
-        [6, 7, 4, "c06950005a3977823f9909989a32c2fbe80e46a5b7414dfa666992be979c533f"],
-        [7, 11, 5, "9432d665b6f3794d075ebf91b702da2fcfc5a0852ca2e831be9ea9b3899f8d9b"],
-        [8, 3, 1, "7a641dbbe3df94870f7d5402636a0fb4be7f3be23c21a4f009dfd7a646c2db6b"],
-        [9, 6, 3, "20a02efea86be62b7244917631cc714d237190f8447da0a7751961e69b0fa8ca"],
-        [10, 6, 3, "ef563e79201f8d461fbfd2543e2f7596a7516d2719277d337d10e53a3fa2f782"],
-        [11, 7, 4, "3be58b3400877074747ebc79010d8a571a067a9cfbb9cfbfa2e2a862669b7696"],
-        [12, 7, 3, "e16a695d7f766324d622f9864205567b2cb79a557b6495beeb7f191be835cbb6"],
-        [13, 8, 5, "0ee0f4c9797bf682977759d5718dfd38a0b06b6a22b7a0fbe257217db552c6fc"],
-        [14, 13, 8, "729ff7054f59cbcae742be94191bb9e59d9c22881fc06b749666cf405f6db4cd"],
-        [15, 7, 5, "740be876eb55365538e12d46e9e5192138e68e4726b27d42cf38a49704e67f2b"],
-        [16, 7, 4, "b9ef2825bb48fa62e92da3db545089c20a4b702ec2ef189e3a6a9be8f94685ff"]
+    // Жестко прописанная конфигурация сетки на основе вашей картинки
+    // [номер, стартовая_колонка(1-17), длина_слова, sha256_хэш]
+    const crosswordMap = [
+        [1, 9, 7, "65076ec6301389bc70b0946b9409893d1421f1da8b9bf58df209b4db7046098d"],
+        [2, 6, 6, "fe326880864eb7984f479d2b27af6c43336ee5eb725bc7051d95392e20ff9a70"],
+        [3, 6, 5, "b6fe9bdaebc25492212b07e7804473b1858c8ec7ffdf615967ee359ff246e7f1"],
+        [4, 5, 7, "15f13456c64bf210b379893ef2d33457a41ec4391694f8e658ec879a6136dfd0"],
+        [5, 4, 11, "cb8eb235a8df9e8ee4875704d94f24300bc80b85aa2638a1a36412f716611833"],
+        [6, 5, 7, "c06950005a3977823f9909989a32c2fbe80e46a5b7414dfa666992be979c533f"],
+        [7, 4, 11, "9432d665b6f3794d075ebf91b702da2fcfc5a0852ca2e831be9ea9b3899f8d9b"],
+        [8, 8, 3, "7a641dbbe3df94870f7d5402636a0fb4be7f3be23c21a4f009dfd7a646c2db6b"],
+        [9, 6, 6, "20a02efea86be62b7244917631cc714d237190f8447da0a7751961e69b0fa8ca"],
+        [10, 6, 6, "ef563e79201f8d461fbfd2543e2f7596a7516d2719277d337d10e53a3fa2f782"],
+        [11, 5, 7, "3be58b3400877074747ebc79010d8a571a067a9cfbb9cfbfa2e2a862669b7696"],
+        [12, 6, 7, "e16a695d7f766324d622f9864205567b2cb79a557b6495beeb7f191be835cbb6"],
+        [13, 4, 8, "0ee0f4c9797bf682977759d5718dfd38a0b06b6a22b7a0fbe257217db552c6fc"],
+        [14, 1, 13, "729ff7054f59cbcae742be94191bb9e59d9c22881fc06b749666cf405f6db4cd"],
+        [15, 4, 7, "740be876eb55365538e12d46e9e5192138e68e4726b27d42cf38a49704e67f2b"],
+        [16, 5, 7, "b9ef2825bb48fa62e92da3db545089c20a4b702ec2ef189e3a6a9be8f94685ff"]
     ];
 
-    // Безопасный и точный расчет размеров поля без использования стрелочных методов map
-    let maxLeft = 0;
-    let maxRight = 0;
-    for (let i = 0; i < encryptedWords.length; i++) {
-        let w = encryptedWords[i];
-        let length = w[1];
-        let mainIdx = w[2];
-        if (mainIdx > maxLeft) maxLeft = mainIdx;
-        if ((length - 1 - mainIdx) > maxRight) maxRight = length - 1 - mainIdx;
-    }
-    const totalCols = maxLeft + 1 + maxRight;
-
     const grid = document.getElementById('grid');
+    const totalRows = 16;
+    const totalCols = 17;
+    const mainColumnIndex = 9; // Индекс главной вертикали (столбец 9)
 
-    async function sha256(message) {
-        const msgBuffer = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
+    // Генерация пустой сетки в DOM
+    for (let r = 1; r <= totalRows; r++) {
+        const rowData = crosswordMap[r - 1];
+        const [num, startCol, length, hash] = rowData;
 
-    encryptedWords.forEach((wordData) => {
-        const [num, length, mainIdx, hash] = wordData;
-        const row = document.createElement('div');
-        row.className = 'row';
-        row.dataset.hash = hash;
+        for (let c = 1; c <= totalCols; c++) {
+            const cellContainer = document.createElement('div');
+            cellContainer.className = 'cell-container';
 
-        const startSpaces = maxLeft - mainIdx;
-
-        for (let i = 0; i < totalCols; i++) {
-            if (i < startSpaces || i >= startSpaces + length) {
-                const space = document.createElement('div');
-                space.className = 'cell-space';
-                row.appendChild(space);
-            } else {
-                const charIdx = i - startSpaces;
-                const cellContainer = document.createElement('div');
-                cellContainer.className = 'cell-container';
-
-                if (charIdx === 0) {
+            // Если координата попадает в диапазон слова, рисуем инпут
+            if (c >= startCol && c < startCol + length) {
+                if (c === startCol) {
                     const label = document.createElement('span');
                     label.className = 'num-label';
                     label.innerText = num;
@@ -194,36 +174,55 @@
                 const input = document.createElement('input');
                 input.className = 'cell';
                 input.maxLength = 1;
+                input.setAttribute('row-id', r);
                 
-                if (charIdx === mainIdx) {
+                if (c === mainColumnIndex) {
                     input.classList.add('main-col');
                 }
 
-                input.addEventListener('input', function() {
-                    if (this.value.length === 1) {
-                        const next = this.parentElement.nextElementSibling?.querySelector('input');
-                        if (next) next.focus();
-                    }
-                });
-
                 cellContainer.appendChild(input);
-                row.appendChild(cellContainer);
+            } else {
+                // Если ячейка пустая, просто задаем пустой блок для сохранения сетки CSS Grid
+                cellContainer.style.visibility = 'hidden';
             }
+
+            grid.appendChild(cellContainer);
         }
-        grid.appendChild(row);
+    }
+
+    // Настройка автофокуса на следующую ячейку (по строкам)
+    const inputs = document.querySelectorAll('.cell');
+    inputs.forEach((input, index) => {
+        input.addEventListener('input', function() {
+            if (this.value.length === 1 && index < inputs.length - 1) {
+                // Проверяем, что следующая ячейка принадлежит той же строке
+                if (inputs[index + 1].getAttribute('row-id') === this.getAttribute('row-id')) {
+                    inputs[index + 1].focus();
+                }
+            }
+        });
     });
 
+    // Функция генерации хэша SHA-256
+    async function sha256(message) {
+        const msgBuffer = new TextEncoder().encode(message);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Проверка ответов
     async function checkCrossword() {
-        const rows = document.querySelectorAll('.row');
         let totalGameCorrect = true;
         let anyEmpty = false;
 
-        for (let row of rows) {
-            const inputs = row.querySelectorAll('.cell');
+        for (let r = 1; r <= totalRows; r++) {
+            const rowInputs = document.querySelectorAll(`.cell[row-id="${r}"]`);
+            const targetHash = crosswordMap[r - 1][3];
             let wordAttempt = "";
             let rowEmpty = false;
 
-            inputs.forEach(input => {
+            rowInputs.forEach(input => {
                 if (input.value === "") {
                     rowEmpty = true;
                     anyEmpty = true;
@@ -232,10 +231,6 @@
             });
 
             if (rowEmpty) {
-                inputs.forEach(input => input.classList.remove('correct'));
+                rowInputs.forEach(input => input.classList.remove('correct'));
                 totalGameCorrect = false;
                 continue;
-            }
-
-            const currentHash = await sha256(wordAttempt);
-            const targetHash = row.dataset.hash;
