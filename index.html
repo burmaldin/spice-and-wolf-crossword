@@ -5,24 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Кроссворд: Волчица и Пряности</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f6; color: #333; margin: 20px; display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; }
+        body { 
+            font-family: "Georgia", serif; 
+            /* Эмуляция текстуры старого пергамента */
+            background-color: #f2e6d0;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%),
+                repeating-linear-gradient(45deg, rgba(139,69,19,0.02) 0px, rgba(139,69,19,0.02) 2px, transparent 2px, transparent 10px),
+                repeating-linear-gradient(-45deg, rgba(139,69,19,0.02) 0px, rgba(139,69,19,0.02) 2px, transparent 2px, transparent 10px);
+            color: #4a3319; 
+            margin: 20px; 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 40px; 
+            justify-content: center; 
+        }
         .container { max-width: 600px; }
-        h1 { text-align: center; color: #2c3e50; }
-        .crossword { display: flex; flex-direction: column; gap: 4px; background: #eef2f5; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1 { 
+            text-align: center; 
+            color: #5c3a21; 
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+            border-bottom: 2px dashed #8c6747;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+        /* Сетка кроссворда в стиле старой бумаги */
+        .crossword { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 4px; 
+            background: #e6d5bc; 
+            padding: 15px; 
+            border-radius: 4px; 
+            box-shadow: inset 0 0 20px rgba(139,69,19,0.15), 0 10px 20px rgba(0,0,0,0.1); 
+            border: 1px solid #b39973;
+        }
         .row { display: flex; justify-content: center; align-items: center; gap: 4px; }
         .cell-space { width: 34px; height: 34px; }
         .cell-container { position: relative; width: 34px; height: 34px; }
-        .num-label { position: absolute; top: 1px; left: 2px; font-size: 9px; color: #555; z-index: 10; font-weight: bold; }
-        .cell { width: 100%; height: 100%; text-align: center; font-size: 16px; font-weight: bold; text-transform: uppercase; border: 1px solid #bdc3c7; background: #fff; color: #2c3e50; border-radius: 4px; padding: 0; box-sizing: border-box; }
-        .cell.main-col { background: #d9e2ec; border-color: #9fb3c8; }
-        .cell:focus { outline: 2px solid #3498db; background: #e8f4fd; }
-        .cell.correct { background: #2ecc71 !important; color: white; border-color: #27ae60; }
-        .questions { max-width: 500px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); height: fit-content; }
-        h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
-        ol { padding-left: 20px; margin-bottom: 20px; }
-        li { margin-bottom: 8px; font-size: 14px; line-height: 1.4; }
-        .btn-check { display: block; width: 100%; padding: 10px; margin-top: 15px; background: #3498db; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-check:hover { background: #2980b9; }
+        .num-label { position: absolute; top: 2px; left: 3px; font-size: 9px; color: #6e4e37; z-index: 10; font-weight: bold; }
+        
+        /* Ячейки */
+        .cell { 
+            width: 100%; 
+            height: 100%; 
+            text-align: center; 
+            font-size: 18px; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            border: 1px solid #a6855e; 
+            background: #fdfaf2; 
+            color: #4a3319; 
+            border-radius: 2px; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: "Courier New", monospace;
+        }
+        /* Главная вертикаль (выделена чуть более темным оттенком пергамента) */
+        .cell.main-col { background: #ecdcb9; border-color: #8c6d47; }
+        .cell:focus { outline: 2px solid #b37d4e; background: #fffdf9; }
+        
+        /* Зеленый цвет для правильного ответа адаптирован под ретро-стиль */
+        .cell.correct { background: #557a46 !important; color: #fdfaf2; border-color: #3b5530; }
+        
+        /* Блок вопросов в виде свитка */
+        .questions { 
+            max-width: 500px; 
+            background: #fbf6eb; 
+            padding: 25px; 
+            border-radius: 4px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08), inset 0 0 15px rgba(139,69,19,0.05); 
+            border: 1px solid #cca97c;
+            height: fit-content; 
+        }
+        h3 { margin-top: 0; color: #5c3a21; border-bottom: 2px dashed #cca97c; padding-bottom: 5px; }
+        ol { padding-left: 20px; margin-bottom: 0; }
+        li { margin-bottom: 10px; font-size: 15px; line-height: 1.4; color: #5c4028; }
+        
+        /* Кнопка в купеческом стиле */
+        .btn-check { 
+            display: block; 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 20px; 
+            background: #8c6239; 
+            color: #fdfaf2; 
+            border: 1px solid #6e4a27; 
+            border-radius: 4px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            font-family: "Georgia", serif;
+            cursor: pointer; 
+            transition: 0.2s; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-check:hover { background: #734f2d; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
@@ -53,48 +131,51 @@
         <li>Заведение, где герои ужинают и слушают слухи.</li>
         <li>Церковный чин, плетущий экономические интриги.</li>
     </ol>
-    <h3>Вертикально (выделено цветом):</h3>
-    <ul>
-        <li><strong>ГЛАВНОЕ СЛОВО</strong> — Какая масштабная валютная махинация с серебром Тренни лежала в основе первой арки приключений? (Слово соберется само при правильном заполнении горизонталей).</li>
-    </ul>
 </div>
 
 <script>
-    const words = [
-        [1, "ФОЛИАНТ", 0],
-        [2, "УРОЖАЙ", 3],
-        [3, "КОЗЛЫ", 3],
-        [4, "ЦЕРКОВЬ", 4],
-        [5, "ПАСТУШЕСТВО", 5],
-        [6, "ПШЕНИЦА", 4],
-        [7, "ЧРЕВОУГОДИЕ", 5],
-        [8, "РОМ", 1],
-        [9, "РУМИОН", 3],
-        [10, "ЯБЛОКИ", 3],
-        [11, "ПОШЛИНА", 4],
-        [12, "ПАРТНЕР", 3],
-        [13, "ПРЯНОСТИ", 5],
-        [14, "ПАЛОМНИЧЕСТВО", 8],
-        [15, "ТРАКТИР", 5],
-        [16, "ЕПИСКОП", 4]
+    const encryptedWords = [
+        [1, 7, 0, "65076ec6301389bc70b0946b9409893d1421f1da8b9bf58df209b4db7046098d"],
+        [2, 6, 3, "fe326880864eb7984f479d2b27af6c43336ee5eb725bc7051d95392e20ff9a70"],
+        [3, 5, 3, "b6fe9bdaebc25492212b07e7804473b1858c8ec7ffdf615967ee359ff246e7f1"],
+        [4, 7, 4, "15f13456c64bf210b379893ef2d33457a41ec4391694f8e658ec879a6136dfd0"],
+        [5, 11, 5, "cb8eb235a8df9e8ee4875704d94f24300bc80b85aa2638a1a36412f716611833"],
+        [6, 7, 4, "c06950005a3977823f9909989a32c2fbe80e46a5b7414dfa666992be979c533f"],
+        [7, 11, 5, "9432d665b6f3794d075ebf91b702da2fcfc5a0852ca2e831be9ea9b3899f8d9b"],
+        [8, 3, 1, "7a641dbbe3df94870f7d5402636a0fb4be7f3be23c21a4f009dfd7a646c2db6b"],
+        [9, 6, 3, "20a02efea86be62b7244917631cc714d237190f8447da0a7751961e69b0fa8ca"],
+        [10, 6, 3, "ef563e79201f8d461fbfd2543e2f7596a7516d2719277d337d10e53a3fa2f782"],
+        [11, 7, 4, "3be58b3400877074747ebc79010d8a571a067a9cfbb9cfbfa2e2a862669b7696"],
+        [12, 7, 3, "e16a695d7f766324d622f9864205567b2cb79a557b6495beeb7f191be835cbb6"],
+        [13, 8, 5, "0ee0f4c9797bf682977759d5718dfd38a0b06b6a22b7a0fbe257217db552c6fc"],
+        [14, 13, 8, "729ff7054f59cbcae742be94191bb9e59d9c22881fc06b749666cf405f6db4cd"],
+        [15, 7, 5, "740be876eb55365538e12d46e9e5192138e68e4726b27d42cf38a49704e67f2b"],
+        [16, 7, 4, "b9ef2825bb48fa62e92da3db545089c20a4b702ec2ef189e3a6a9be8f94685ff"]
     ];
 
-    const maxLeft = Math.max(...words.map(w => w[2]));
-    const maxRight = Math.max(...words.map(w => w[1].length - 1 - w[2]));
+    const maxLeft = Math.max(...encryptedWords.map(w => w[2]));
+    const maxRight = Math.max(...encryptedWords.map(w => w[1] - 1 - w[2]));
     const totalCols = maxLeft + 1 + maxRight;
 
     const grid = document.getElementById('grid');
 
-    words.forEach((wordData) => {
-        const [num, word, mainIdx] = wordData;
+    async function sha256(message) {
+        const msgBuffer = new TextEncoder().encode(message);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    encryptedWords.forEach((wordData) => {
+        const [num, length, mainIdx, hash] = wordData;
         const row = document.createElement('div');
         row.className = 'row';
-        row.dataset.wordIndex = num; // Запоминаем номер строки для проверки
+        row.dataset.hash = hash;
 
         const startSpaces = maxLeft - mainIdx;
 
         for (let i = 0; i < totalCols; i++) {
-            if (i < startSpaces || i >= startSpaces + word.length) {
+            if (i < startSpaces || i >= startSpaces + length) {
                 const space = document.createElement('div');
                 space.className = 'cell-space';
                 row.appendChild(space);
@@ -113,7 +194,6 @@
                 const input = document.createElement('input');
                 input.className = 'cell';
                 input.maxLength = 1;
-                input.dataset.answer = word[charIdx];
                 
                 if (charIdx === mainIdx) {
                     input.classList.add('main-col');
@@ -133,41 +213,26 @@
         grid.appendChild(row);
     });
 
-    function checkCrossword() {
+    async function checkCrossword() {
         const rows = document.querySelectorAll('.row');
         let totalGameCorrect = true;
+        let anyEmpty = false;
 
-        rows.forEach(row => {
+        for (let row of rows) {
             const inputs = row.querySelectorAll('.cell');
-            let rowCorrect = true;
+            let wordAttempt = "";
+            let rowEmpty = false;
 
-            // Сначала проверяем, все ли буквы в текущем ряду введены верно
             inputs.forEach(input => {
-                if (input.value.toUpperCase() !== input.dataset.answer) {
-                    rowCorrect = false;
+                if (input.value === "") {
+                    rowEmpty = true;
+                    anyEmpty = true;
                 }
+                wordAttempt += input.value.toUpperCase();
             });
 
-            // Если всё слово целиком правильное — подсвечиваем его зелёным
-            inputs.forEach(input => {
-                if (rowCorrect) {
-                    input.classList.add('correct');
-                } else {
-                    input.classList.remove('correct'); // Убираем зелёный, если была ошибка
-                    totalGameCorrect = false;
-                }
-            });
-        });
-
-        // Проверяем, заполнено ли всё поле без единой ошибки
-        const allInputs = document.querySelectorAll('.cell');
-        const anyEmpty = Array.from(allInputs).some(i => i.value === '');
-
-        if (totalGameCorrect && !anyEmpty) {
-            alert('Поздравляем! Весь кроссворд разгадан абсолютно верно! 🎉');
-        }
-    }
-</script>
-
-</body>
-</html>
+            if (rowEmpty) {
+                inputs.forEach(input => input.classList.remove('correct'));
+                totalGameCorrect = false;
+                continue;
+            }
