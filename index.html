@@ -145,9 +145,16 @@
         [16, 7, 4, "b9ef2825bb48fa62e92da3db545089c20a4b702ec2ef189e3a6a9be8f94685ff"]
     ];
 
-    // ИСПРАВЛЕНО: Индексы w[2] и w[1] для корректного поиска максимума
-    const maxLeft = Math.max(...encryptedWords.map(w => w[2]));
-    const maxRight = Math.max(...encryptedWords.map(w => w[1] - 1 - w[2]));
+    // Безопасный и точный расчет размеров поля без использования стрелочных методов map
+    let maxLeft = 0;
+    let maxRight = 0;
+    for (let i = 0; i < encryptedWords.length; i++) {
+        let w = encryptedWords[i];
+        let length = w[1];
+        let mainIdx = w[2];
+        if (mainIdx > maxLeft) maxLeft = mainIdx;
+        if ((length - 1 - mainIdx) > maxRight) maxRight = length - 1 - mainIdx;
+    }
     const totalCols = maxLeft + 1 + maxRight;
 
     const grid = document.getElementById('grid');
@@ -232,8 +239,3 @@
 
             const currentHash = await sha256(wordAttempt);
             const targetHash = row.dataset.hash;
-
-            if (currentHash === targetHash) {
-                inputs.forEach(input => input.classList.add('correct'));
-            } else {
-                inputs.forEach(input => input.classList.remove('correct'));
