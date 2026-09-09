@@ -7,7 +7,6 @@
     <style>
         body { 
             font-family: "Georgia", serif; 
-            /* Эмуляция текстуры старого пергамента */
             background-color: #f2e6d0;
             background-image: 
                 radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%),
@@ -30,7 +29,6 @@
             padding-bottom: 10px;
             margin-bottom: 25px;
         }
-        /* Сетка кроссворда в стиле старой бумаги */
         .crossword { 
             display: flex; 
             flex-direction: column; 
@@ -46,7 +44,6 @@
         .cell-container { position: relative; width: 34px; height: 34px; }
         .num-label { position: absolute; top: 2px; left: 3px; font-size: 9px; color: #6e4e37; z-index: 10; font-weight: bold; }
         
-        /* Ячейки */
         .cell { 
             width: 100%; 
             height: 100%; 
@@ -62,14 +59,10 @@
             box-sizing: border-box; 
             font-family: "Courier New", monospace;
         }
-        /* Главная вертикаль (выделена чуть более темным оттенком пергамента) */
         .cell.main-col { background: #ecdcb9; border-color: #8c6d47; }
         .cell:focus { outline: 2px solid #b37d4e; background: #fffdf9; }
-        
-        /* Зеленый цвет для правильного ответа адаптирован под ретро-стиль */
         .cell.correct { background: #557a46 !important; color: #fdfaf2; border-color: #3b5530; }
         
-        /* Блок вопросов в виде свитка */
         .questions { 
             max-width: 500px; 
             background: #fbf6eb; 
@@ -83,7 +76,6 @@
         ol { padding-left: 20px; margin-bottom: 0; }
         li { margin-bottom: 10px; font-size: 15px; line-height: 1.4; color: #5c4028; }
         
-        /* Кнопка в купеческом стиле */
         .btn-check { 
             display: block; 
             width: 100%; 
@@ -153,6 +145,7 @@
         [16, 7, 4, "b9ef2825bb48fa62e92da3db545089c20a4b702ec2ef189e3a6a9be8f94685ff"]
     ];
 
+    // ИСПРАВЛЕНО: Индексы w[2] и w[1] для корректного поиска максимума
     const maxLeft = Math.max(...encryptedWords.map(w => w[2]));
     const maxRight = Math.max(...encryptedWords.map(w => w[1] - 1 - w[2]));
     const totalCols = maxLeft + 1 + maxRight;
@@ -236,3 +229,11 @@
                 totalGameCorrect = false;
                 continue;
             }
+
+            const currentHash = await sha256(wordAttempt);
+            const targetHash = row.dataset.hash;
+
+            if (currentHash === targetHash) {
+                inputs.forEach(input => input.classList.add('correct'));
+            } else {
+                inputs.forEach(input => input.classList.remove('correct'));
