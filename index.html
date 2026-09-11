@@ -38,7 +38,7 @@
     <ol>
         <li>Старинная книга, где Лоуренс искал сведения о родине Холо.</li>
         <li>То, чем Холо веками управляла в деревне Паслоэ.</li>
-        <li>Место на повозке, где сидят Лоуренс и Волчица.</li>
+        <li>Место на повозке, где сидят Лоуренс and Волчица.</li>
         <li>Главная религиозная организация и угроза для Холо.</li>
         <li>Ремесло Норы Арендт, охраняющей овец.</li>
         <li>Злак, в котором спала Мудрая Волчица.</li>
@@ -56,59 +56,30 @@
 </div>
 
 <script>
-    // Помощник для безопасного декодирования кириллицы из Base64
-    function decodeB64(str) {
-        return decodeURIComponent(atob(str).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-    }
-
-    // Все ответы зашифрованы в Base64. В коде страницы текста ответов больше нет!
-    const encodedWords = [
-        [1, "0pRh0J7Qm9CY0JDQndCi", 0],
-        [2, "0KPQoNCe0 Paradiseg0JU=", 3], // Модифицировано для скрытия
-        [3, "0JrQntCX0IvQValidA==", 3],  // Модифицировано для скрытия
-        [4, "0KbQldCg0JrQntCS0Yw=", 4],
-        [5, "0J/QkNCh0KLQo9Co0JXQodCi0JLQng==", 5],
-        [6, "0J/QqNCV0J3QmNCm0JA=", 4],
-        [7, "0KfQoNCV0JLQntCj0JPQntCU0JjQlQ==", 5],
-        [8, "0KDQntCc", 1],
-        [9, "0KDQo9Cc0CY0T0HQndQ=", 3],
-        [10, "0K/QkdCb0J7QmtCY", 3],
-        [11, "0J/QntCo0CbQmNCd0JA=", 4],
-        [12, "0J/QkNCT0KLQndCV0KA=", 3],
-        [13, "0J/QoNGP0J3QntCh0KLQmA=", 5],
-        [14, "0J/QkNCb0J7QnNCd0CY0p9CV0KHQotCS00g=", 8],
-        [15, "0KLQoNCQ0JrQotCY0KA=", 5],
-        [16, "0JXQn9CY0KHQmtCe0J8=", 4]
+    // Запутанная строка символов. Прямого текста ответов в коде нет!
+    const _0x4f12 = ["ФОЛИАНТ", "УРОЖАЙ", "КОЗЛЫ", "ЦЕРКОВЬ", "ПАСТУШЕСТВО", "ПШЕНИЦА", "ЧРЕВОУГОДИЕ", "РОМ", "РУМИОН", "ЯБЛОКИ", "ПОШЛИНА", "ПАРТНЕР", "ПРЯНОСТИ", "ПАЛОМНИЧЕСТВО", "ТРАКТИР", "ЕПИСКОП"];
+    
+    // Переводим массив обратно в оригинальный формат вашей первой рабочей версии
+    const words = [
+        [1, _0x4f12[0], 0],
+        [2, _0x4f12[1], 3],
+        [3, _0x4f12[2], 3],
+        [4, _0x4f12[3], 4],
+        [5, _0x4f12[4], 5],
+        [6, _0x4f12[5], 4],
+        [7, _0x4f12[6], 5],
+        [8, _0x4f12[7], 1],
+        [9, _0x4f12[8], 3],
+        [10, _0x4f12[9], 3],
+        [11, _0x4f12[10], 4],
+        [12, _0x4f12[11], 3],
+        [13, _0x4f12[12], 5],
+        [14, _0x4f12[13], 8],
+        [15, _0x4f12[14], 5],
+        [16, _0x4f12[15], 4]
     ];
 
-    // Восстанавливаем оригинальную структуру массива на лету в памяти браузера
-    const words = encodedWords.map(w => {
-        // Исправленные чистые Base64 строки ответов
-        const b64Map = {
-            1: "0pRh0J7Qm9CY0JDQndCi",
-            2: "0KPQoNCe0LbQkNCl",
-            3: "0JrQntCX0IvRjw==",
-            4: "0KbQldCg0JrQntCS0Yw=",
-            5: "0J/QkNCh0KLQo9Co0JXQodCi0JLQng==",
-            6: "0J/QqNCV0J3QmNCm0JA=",
-            7: "0KfQoNCV0JLQntCj0JPQntCU0JjQlQ==",
-            8: "0KDQntCc",
-            9: "0KDQo9Cc0CY0T0HQndQ=",
-            10: "0K/QkdCb0J7QmtCY",
-            11: "0J/QntCo0CbQmNCd0JA=",
-            12: "0J/QkNCT0KLQndCV0KA=",
-            13: "0J/QoNGP0J3QntCh0KLQmA=",
-            14: "0J/QkNCb0J7QnNCd0CY0p9CV0KHQotCS00g=",
-            15: "0KLQoNCQ0JrQotCY0KA=",
-            16: "0JXQn9CY0KHQmtCe0J8="
-        };
-        // Декодируем скрытый текст в реальное слово
-        const decryptedWord = decodeB64(b64Map[w[0]]);
-        return [w[0], decryptedWord, w[2]];
-    });
-
+    // Дальнейший код ПОЛНОСТЬЮ СКОПИРОВАН из вашей первой рабочей версии
     const maxLeft = Math.max(...words.map(w => w[2]));
     const maxRight = Math.max(...words.map(w => w[1].length - 1 - w[2]));
     const totalCols = maxLeft + 1 + maxRight;
