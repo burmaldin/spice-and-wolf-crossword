@@ -19,7 +19,7 @@
         .cell.correct { background: #2ecc71 !important; color: white; border-color: #27ae60; }
         .questions { max-width: 500px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); height: fit-content; }
         h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
-        ol { padding-left: 20px; margin-bottom: 20px; }
+        ol { padding-left: 20px; margin-bottom: 0; }
         li { margin-bottom: 8px; font-size: 14px; line-height: 1.4; }
         .btn-check { display: block; width: 100%; padding: 10px; margin-top: 15px; background: #3498db; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn-check:hover { background: #2980b9; }
@@ -53,10 +53,6 @@
         <li>Заведение, где герои ужинают и слушают слухи.</li>
         <li>Церковный чин, плетущий экономические интриги.</li>
     </ol>
-    <h3>Вертикально (выделено цветом):</h3>
-    <ul>
-        <li><strong>ГЛАВНОЕ СЛОВО</strong> — Какая масштабная валютная махинация с серебром Тренни лежала в основе первой арки приключений? (Слово соберется само при правильном заполнении горизонталей).</li>
-    </ul>
 </div>
 
 <script>
@@ -89,7 +85,6 @@
         const [num, word, mainIdx] = wordData;
         const row = document.createElement('div');
         row.className = 'row';
-        row.dataset.wordIndex = num; // Запоминаем номер строки для проверки
 
         const startSpaces = maxLeft - mainIdx;
 
@@ -141,25 +136,22 @@
             const inputs = row.querySelectorAll('.cell');
             let rowCorrect = true;
 
-            // Сначала проверяем, все ли буквы в текущем ряду введены верно
             inputs.forEach(input => {
                 if (input.value.toUpperCase() !== input.dataset.answer) {
                     rowCorrect = false;
                 }
             });
 
-            // Если всё слово целиком правильное — подсвечиваем его зелёным
             inputs.forEach(input => {
                 if (rowCorrect) {
                     input.classList.add('correct');
                 } else {
-                    input.classList.remove('correct'); // Убираем зелёный, если была ошибка
+                    input.classList.remove('correct');
                     totalGameCorrect = false;
                 }
             });
         });
 
-        // Проверяем, заполнено ли всё поле без единой ошибки
         const allInputs = document.querySelectorAll('.cell');
         const anyEmpty = Array.from(allInputs).some(i => i.value === '');
 
